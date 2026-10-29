@@ -200,16 +200,16 @@ class $modify(RendererGJBaseGameLayer, GJBaseGameLayer) {
                 continue;
 
             // Idk what the hell this does but sure
-            if (eman->m_unkMap770.find({ targetId, centerId }) != eman->m_unkMap770.end()) {
-                for (auto obj : eman->m_unkMap770[{ targetId, centerId }]) {
-                    if (obj->m_someInterpValue1RelatedFalse)
-                        continue;
-                    if (staticGroup->count() != 0)
-                        rotation += cmdObj->m_someInterpValue1RelatedOne - cmdObj->m_someInterpValue1RelatedZero;
-                    else
-                        rotation += cmdObj->m_someInterpValue2RelatedOne - cmdObj->m_someInterpValue2RelatedZero;
-                }
-            }
+            // if (eman->m_unkMap770.find({ targetId, centerId }) != eman->m_unkMap770.end()) {
+            //     for (auto obj : eman->m_unkMap770[{ targetId, centerId }]) {
+            //         if (obj->m_someInterpValue1RelatedFalse)
+            //             continue;
+            //         if (staticGroup->count() != 0)
+            //             rotation += cmdObj->m_someInterpValue1RelatedOne - cmdObj->m_someInterpValue1RelatedZero;
+            //         else
+            //             rotation += cmdObj->m_someInterpValue2RelatedOne - cmdObj->m_someInterpValue2RelatedZero;
+            //     }
+            // }
 
             if (mainObject == nullptr)
                 renderer->getGroupManager().rotateGroup(targetId, rotation, cmdObj->m_lockObjectRotation);
@@ -219,7 +219,7 @@ class $modify(RendererGJBaseGameLayer, GJBaseGameLayer) {
             }
         }
 
-        GJBaseGameLayer::processRotationActions();
+        ((decomp_GJBaseGameLayer*)this)->processRotationActions();
     }
 
     void processRotationActions() {
@@ -314,6 +314,19 @@ class OnMenuLoad : public CCNode {
 public:
     void showLoadAlerts() {
         if (!isOpenGLAtLeastVersion(4, 3)) {
+            std::string version = (const char*)glGetString(GL_VERSION);
+            std::transform(version.begin(), version.end(), version.begin(), [](char ch) { return std::tolower(ch); });
+
+            if (version.find("reviangle") != std::string::npos) {
+                FLAlertLayer::create(
+                    "Bismuth error!",
+                    "You are using ReviANGLE which does not supply the required OpenGL version 4.3\n"
+                    "Disable ReviANGLE and try again.",
+                    "Ok"
+                )->show();
+                return;
+            }
+
             FLAlertLayer::create(
                 "Bismuth error!",
                 "Your GPU does not support the required OpenGL 4.3!\n"

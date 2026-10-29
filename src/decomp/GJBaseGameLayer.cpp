@@ -210,6 +210,7 @@ void decomp_GJBaseGameLayer::optimized_processRotationActions() {
         GroupManager& groupManager = Renderer::get()->getGroupManager();
 
         auto objectsToRotate = groupManager.getVanillaRotateGroup(gco->m_targetGroupID);
+        // auto objectsToRotateArray = getOptimizedGroup(gco->m_targetGroupID);
 
         CCArray* staticGroup = getStaticGroup(gco->m_targetGroupID);
 
@@ -217,12 +218,15 @@ void decomp_GJBaseGameLayer::optimized_processRotationActions() {
         bool ignoreStaticGroups;
 
         if (staticGroup->count() != 0) {
+            // objectsToRotateArray = getGroup(gco->m_targetGroupID);
             rotation = gco->m_someInterpValue1RelatedOne - gco->m_someInterpValue1RelatedZero;
             ignoreStaticGroups = false;
         } else {
             rotation = gco->m_someInterpValue2RelatedOne - gco->m_someInterpValue2RelatedZero;
             ignoreStaticGroups = true;
         }
+
+        // CCArrayExt<GameObject*, false> objectsToRotate = objectsToRotateArray;
 
         if (rotation == 0.0f && !gco->m_finishRelated)
             continue;
@@ -235,17 +239,17 @@ void decomp_GJBaseGameLayer::optimized_processRotationActions() {
         int centerId = gco->m_centerGroupID;
 
         // I just couldn't figure out how to do this any other way
-        float rendererRotation = rotation;
-        if (m_effectManager->m_unkMap770.find({ targetId, centerId }) != m_effectManager->m_unkMap770.end()) {
-            for (auto obj : m_effectManager->m_unkMap770[{ targetId, centerId }]) {
-                if (obj->m_someInterpValue1RelatedFalse)
-                    continue;
-                if (staticGroup->count() != 0)
-                    rendererRotation += gco->m_someInterpValue1RelatedOne - gco->m_someInterpValue1RelatedZero;
-                else
-                    rendererRotation += gco->m_someInterpValue2RelatedOne - gco->m_someInterpValue2RelatedZero;
-            }
-        }
+        // float rendererRotation = rotation;
+        // if (m_effectManager->m_unkMap770.find({ targetId, centerId }) != m_effectManager->m_unkMap770.end()) {
+        //     for (auto obj : m_effectManager->m_unkMap770[{ targetId, centerId }]) {
+        //         if (obj->m_someInterpValue1RelatedFalse)
+        //             continue;
+        //         if (staticGroup->count() != 0)
+        //             rendererRotation += gco->m_someInterpValue1RelatedOne - gco->m_someInterpValue1RelatedZero;
+        //         else
+        //             rendererRotation += gco->m_someInterpValue2RelatedOne - gco->m_someInterpValue2RelatedZero;
+        //     }
+        // }
 
         gco->m_someInterpValue1RelatedFalse = true;
 
@@ -259,10 +263,10 @@ void decomp_GJBaseGameLayer::optimized_processRotationActions() {
         );
 
         if (mainObject == nullptr)
-            groupManager.rotateGroup(gco->m_targetGroupID, rendererRotation, gco->m_lockObjectRotation);
+            groupManager.rotateGroup(gco->m_targetGroupID, rotation, gco->m_lockObjectRotation);
         else {
             auto pos = mainObject->getUnmodifiedPosition();
-            groupManager.rotateGroup(gco->m_targetGroupID, rendererRotation, gco->m_lockObjectRotation, ccPointToGLM(pos));
+            groupManager.rotateGroup(gco->m_targetGroupID, rotation, gco->m_lockObjectRotation, ccPointToGLM(pos));
         }
 
         if (objectsToRotate.empty())
